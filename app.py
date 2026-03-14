@@ -507,55 +507,55 @@ def main() -> None:
                 if user_input:
                     st.session_state.messages.append({"role": "user", "content": user_input})
 
-                with chat_box:
-                    with st.chat_message("user"):
-                        st.markdown(user_input)
+                    with chat_box:
+                        with st.chat_message("user"):
+                            st.markdown(user_input)
 
-                    with st.chat_message("assistant"):
-                        with st.spinner("Analysing…"):
-                            try:
-                                llm = _llm(cfg["groq_key"], cfg["model"])
-                                answer = ""; sources = None
+                        with st.chat_message("assistant"):
+                            with st.spinner("Analysing…"):
+                                try:
+                                    llm = _llm(cfg["groq_key"], cfg["model"])
+                                    answer = ""; sources = None
 
-                                if st.session_state.agent_mode == "Standard Chat":
-                                    prompt, sources = handle_chat(cfg, user_input)
-                                    answer = llm.invoke([HumanMessage(content=prompt)]).content
+                                    if st.session_state.agent_mode == "Standard Chat":
+                                        prompt, sources = handle_chat(cfg, user_input)
+                                        answer = llm.invoke([HumanMessage(content=prompt)]).content
 
-                                elif st.session_state.agent_mode == "Diagnostic Analysis":
-                                    if not st.session_state.vector_store:
-                                        answer = ("⚠️ **No reports loaded.**\n\n"
-                                                  "Use the **＋** button to upload and process a PDF first.")
-                                    else:
-                                        report, score = run_diagnostic_analysis(
-                                            patient_features=user_input,
-                                            vector_store=st.session_state.vector_store,
-                                            llm=llm,
-                                        )
-                                        answer = (f"### 📊 Interpretation Report\n"
-                                                  f"**Concern Level Score: {score}/100**\n\n{report}")
+                                    elif st.session_state.agent_mode == "Diagnostic Analysis":
+                                        if not st.session_state.vector_store:
+                                            answer = ("⚠️ **No reports loaded.**\n\n"
+                                                      "Use the **＋** button to upload and process a PDF first.")
+                                        else:
+                                            report, score = run_diagnostic_analysis(
+                                                patient_features=user_input,
+                                                vector_store=st.session_state.vector_store,
+                                                llm=llm,
+                                            )
+                                            answer = (f"### 📊 Interpretation Report\n"
+                                                      f"**Concern Level Score: {score}/100**\n\n{report}")
 
-                                elif st.session_state.agent_mode == "Summarise Jargon":
-                                    filled = SUMMARIZER_PROMPT.format(medical_text=user_input)
-                                    answer = llm.invoke([HumanMessage(content=filled)]).content
+                                    elif st.session_state.agent_mode == "Summarise Jargon":
+                                        filled = SUMMARIZER_PROMPT.format(medical_text=user_input)
+                                        answer = llm.invoke([HumanMessage(content=filled)]).content
 
-                                st.markdown(answer)
-                                if sources:
-                                    with st.expander("📎 Sources", expanded=False):
-                                        st.markdown(sources)
+                                    st.markdown(answer)
+                                    if sources:
+                                        with st.expander("📎 Sources", expanded=False):
+                                            st.markdown(sources)
 
-                                st.session_state.messages.append({
-                                    "role": "assistant",
-                                    "content": answer,
-                                    "sources": sources,
-                                })
+                                    st.session_state.messages.append({
+                                        "role": "assistant",
+                                        "content": answer,
+                                        "sources": sources,
+                                    })
 
-                            except Exception as exc:
-                                st.error(f"Error: {exc}")
-                                logger.error("Chat error: %s", exc)
-                                st.session_state.messages.append({
-                                    "role": "assistant",
-                                    "content": f"⚠️ An error occurred: {exc}",
-                                })
+                                except Exception as exc:
+                                    st.error(f"Error: {exc}")
+                                    logger.error("Chat error: %s", exc)
+                                    st.session_state.messages.append({
+                                        "role": "assistant",
+                                        "content": f"⚠️ An error occurred: {exc}",
+                                    })
 
 
 if __name__ == "__main__":
