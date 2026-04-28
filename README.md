@@ -6,6 +6,12 @@ MediAssist AI is a modern, ChatGPT-style medical assistant built to help users s
 
 ---
 
+## 🔗 Live Demo
+
+👉 **[Try MediAssist AI on Streamlit Cloud](https://ai--medical-chatbot-h9jqzpzsfxfmmcbgt7sraf.streamlit.app/)**
+
+---
+
 ## 🌟 Features
 
 *   **Beautiful Modern UI:** A premium, minimalist light theme inspired by ChatGPT with a stable, fixed-bottom chat composer.
